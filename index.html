@@ -15,10 +15,15 @@
     </style>
 </head>
 <body>
-    <!-- แก้ไขตรงนี้: เพิ่ม allow="geolocation" เพื่อเปิดสิทธิ์ GPS -->
+    <!-- 
+      แก้ไขที่สำคัญ: 
+      ต้องเพิ่ม allow="camera" เพื่อให้ Iframe ขอใช้กล้องได้ 
+      แนะนำให้ใส่ microphone และ geolocation เผื่อไว้ด้วยครับ
+    -->
     <iframe 
         src="https://script.google.com/macros/s/AKfycbxDpwwTe02EyaUsf98eeCICeR4NYEkbjcjYSAXsQkKVT09ZqbnA-72Cfs9PrMPbEJQp/exec"
-        allow="geolocation">
+        allow="camera *; microphone *; geolocation *"
+        allowfullscreen>
     </iframe>
 </body>
 </html>
