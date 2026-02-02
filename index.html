@@ -1,60 +1,30 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th"
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Organic Farm Super App</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Farm</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/x1zXPDk9/images-3.png">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/x1zXPDk9/images-3.png"> 
-    
     <style>
-        body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            overflow: hidden; background-color: #27ae60;
-            font-family: sans-serif;
-        }
-        iframe { 
-            width: 100%; height: 100%; border: none; display: block; 
-        }
-        /* ปุ่มสำรองกรณีกล้องไม่ขึ้น */
-        #fallback-btn {
-            position: fixed; bottom: 20px; right: 20px;
-            background: #ffffff; color: #27ae60;
-            border: none; padding: 12px 20px;
-            border-radius: 50px; font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: none; z-index: 9999;
-            text-decoration: none; font-size: 14px;
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        /* เพิ่ม display: block เพื่อแก้ปัญหา scrollbar ซ้อน */
+        iframe { width: 100%; height: 100%; border: none; display: block; }
     </style>
 </head>
 <body>
-
-    <a id="fallback-btn" href="https://script.google.com/macros/s/AKfycbwuYQC_KyLMaXctElQsqQ6waQjglMN-u9aXOsHpj3ZjKCc2Zrx7TvPTUkRzAKp30Zaf/exec" target="_blank">
-        🚀 เปิดใน Browser หลัก (แก้ปัญหากล้อง)
-    </a>
-
+    <!-- 
+      แก้ไขที่สำคัญ: 
+      ต้องเพิ่ม allow="camera" เพื่อให้ Iframe ขอใช้กล้องได้ 
+      แนะนำให้ใส่ microphone และ geolocation เผื่อไว้ด้วยครับ
+    -->
     <iframe 
-        id="app-frame"
         src="https://script.google.com/macros/s/AKfycbwuYQC_KyLMaXctElQsqQ6waQjglMN-u9aXOsHpj3ZjKCc2Zrx7TvPTUkRzAKp30Zaf/exec"
-        allow="camera; microphone; geolocation; self; https://script.google.com"
+        allow="camera *; microphone *; geolocation *"
         allowfullscreen>
+
     </iframe>
 
-    <script>
-        // แสดงปุ่มสำรองหลังจากผ่านไป 3 วินาที เผื่อผู้ใช้มีปัญหากับการใช้งานใน Iframe
-        setTimeout(() => {
-            document.getElementById('fallback-btn').style.display = 'block';
-        }, 3000);
-
-        // ตรวจสอบเบื้องต้นว่าเป็น Android หรือไม่
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        const isInApp = /Line|FB|Instagram/i.test(navigator.userAgent);
-
-        if (isAndroid && isInApp) {
-            console.log("Detecting Android In-App Browser - Camera might be restricted in Iframe");
-        }
-    </script>
 </body>
+
 </html>
