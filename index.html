@@ -1,29 +1,93 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organic Farm</title>
-    
-    <link rel="icon" type="image/png" href="https://i.postimg.cc/x1zXPDk9/images-3.png">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/x1zXPDk9/images-3.png"> 
-    
-    <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
-        /* เพิ่ม display: block เพื่อแก้ปัญหา scrollbar ซ้อน */
-        iframe { width: 100%; height: 100%; border: none; display: block; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Organic Farm</title>
+    
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/x1zXPDk9/images-3.png">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/x1zXPDk9/images-3.png"> 
+    
+    <style>
+        /* สไตล์ให้เหมือน App จริง */
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background-color: #ffffff;
+            font-family: 'Sarabun', sans-serif;
+        }
+        iframe { 
+            width: 100%; height: 100%; border: none; display: block; 
+        }
+        
+        /* หน้า Loading ระหว่างรอเด้งไป Chrome */
+        #splash-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #27ae60; color: white;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 10000; transition: opacity 0.5s;
+        }
+        .loader {
+            width: 50px; height: 50px; border: 5px solid #fff;
+            border-bottom-color: transparent; border-radius: 50%;
+            display: inline-block; animation: rotation 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
 <body>
-    <!-- 
-      แก้ไขที่สำคัญ: 
-      ต้องเพิ่ม allow="camera" เพื่อให้ Iframe ขอใช้กล้องได้ 
-      แนะนำให้ใส่ microphone และ geolocation เผื่อไว้ด้วยครับ
-    -->
-    <iframe 
-        src="https://script.google.com/macros/s/AKfycbwuYQC_KyLMaXctElQsqQ6waQjglMN-u9aXOsHpj3ZjKCc2Zrx7TvPTUkRzAKp30Zaf/exec"
-        allow="camera *; microphone *; geolocation *"
-        allowfullscreen>
-    </iframe>
+
+    <!-- หน้า Splash Screen สำหรับตอนที่ระบบกำลังทำงาน -->
+    <div id="splash-screen">
+        <div class="loader"></div>
+        <h3 style="margin:0;">กำลังเริ่มแอปพลิเคชัน...</h3>
+        <p style="font-size: 0.9rem; opacity: 0.8;">กรุณารอสักครู่</p>
+    </div>
+
+    <!-- Iframe ที่ซ่อนแถบสีน้ำเงิน -->
+    <iframe 
+        id="app-frame"
+        src="https://script.google.com/macros/s/AKfycbwuYQC_KyLMaXctElQsqQ6waQjglMN-u9aXOsHpj3ZjKCc2Zrx7TvPTUkRzAKp30Zaf/exec"
+        allow="camera; microphone; geolocation"
+        allowfullscreen>
+    </iframe>
+
+    <script>
+        const gasUrl = "https://script.google.com/macros/s/AKfycbwuYQC_KyLMaXctElQsqQ6waQjglMN-u9aXOsHpj3ZjKCc2Zrx7TvPTUkRzAKp30Zaf/exec";
+        const githubUrl = window.location.href; // ลิงก์ GitHub ปัจจุบัน
+
+        function init() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            const isAndroid = /Android/i.test(ua);
+            const isInApp = /Line|FBAN|FBAV|Instagram|Messenger/i.test(ua);
+
+            if (isAndroid && isInApp) {
+                // กรณีเป็น Android และอยู่ใน LINE: บังคับเปิด Chrome โดยใช้ลิงก์ GitHub เดิม
+                // การทำแบบนี้จะทำให้แอปไปเปิดใน Chrome ซึ่ง Iframe จะใช้งานกล้องได้ และไม่มีแถบสีน้ำเงิน
+                const chromeIntent = `intent://${githubUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.android.chrome;end`;
+                window.location.href = chromeIntent;
+                
+                // กันเหนียว: เผื่อ Intent ไม่ทำงาน ให้ใช้ปุ่มหลอก
+                setTimeout(() => {
+                    document.getElementById('splash-screen').innerHTML = `
+                        <img src="https://i.postimg.cc/x1zXPDk9/images-3.png" style="width:80px; margin-bottom:20px;">
+                        <a href="${githubUrl}" target="_blank" style="color:white; text-decoration:none; border:2px solid white; padding:10px 20px; border-radius:50px; font-weight:bold;">
+                            กดเพื่อเริ่มใช้งาน (Chrome)
+                        </a>
+                    `;
+                }, 3000);
+            } else {
+                // ถ้าอยู่นอก LINE หรือเป็น iOS แล้ว ให้ซ่อน Splash Screen และแสดง Iframe ปกติ
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('splash-screen').style.display = 'none';
+                    }, 500);
+                }, 1000);
+            }
+        }
+
+        window.onload = init;
+    </script>
 </body>
 </html>
